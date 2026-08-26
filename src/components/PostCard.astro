@@ -1,0 +1,139 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import TagList from './TagList.astro';
+
+interface Props {
+	post: CollectionEntry<'posts'>;
+	/** The newest post renders wider, with a larger hero. */
+	featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const { title, description, date, tags, heroImage, heroAlt } = post.data;
+---
+
+<article class:list={['card', 'reveal', { 'card--featured': featured }]}>
+	<a class="card-link" href={`/posts/${post.id}/`}>
+		{
+			heroImage && (
+				<div class="thumb">
+					<Image
+						src={heroImage}
+						alt={heroAlt}
+						width={featured ? 1100 : 640}
+						height={featured ? 480 : 300}
+						loading={featured ? 'eager' : 'lazy'}
+					/>
+				</div>
+			)
+		}
+		<div class="body">
+			<p class="date"><FormattedDate date={date} /></p>
+			<h3 class="title">{title}</h3>
+			<p class="description">{description}</p>
+			<span class="more">Read the account <span aria-hidden="true">→</span></span>
+		</div>
+	</a>
+	{
+		tags.length > 0 && (
+			<div class="card-tags">
+				<TagList tags={tags} label={`Tags for ${title}`} />
+			</div>
+		)
+	}
+</article>
+
+<style>
+	.card {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid transparent;
+		border-radius: var(--radius);
+		background: var(--card);
+		overflow: hidden;
+		transition:
+			border-color var(--dur-hover) var(--ease-out),
+			box-shadow var(--dur-hover) var(--ease-out);
+	}
+
+	.card:hover,
+	.card:focus-within {
+		border-color: var(--hairline);
+		box-shadow: var(--glow);
+	}
+
+	.card-link {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.thumb {
+		overflow: hidden;
+		background: var(--surface);
+	}
+
+	.thumb :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		aspect-ratio: 16 / 9;
+	}
+
+	.card--featured .thumb :global(img) {
+		aspect-ratio: 21 / 9;
+	}
+
+	.body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		flex: 1;
+		padding: 1.5rem;
+	}
+
+	.date {
+		color: var(--text-muted);
+		font-size: var(--size-small);
+	}
+
+	.title {
+		color: var(--text);
+	}
+
+	.card--featured .title {
+		font-family: var(--font-heading), Georgia, serif;
+		font-size: clamp(26px, 3.4vw, 36px);
+		font-weight: 400;
+	}
+
+	.description {
+		color: var(--text-dim);
+		font-size: var(--size-small);
+		line-height: 1.6;
+	}
+
+	.more {
+		margin-top: auto;
+		padding-top: 0.75rem;
+		color: var(--accent);
+		font-family: var(--font-heading), Georgia, serif;
+		font-size: var(--size-eyebrow);
+		font-weight: 700;
+		letter-spacing: var(--tracking-eyebrow);
+		text-transform: uppercase;
+	}
+
+	.card-tags {
+		padding: 0 1.5rem 1.5rem;
+	}
+
+	.card-link:hover .more {
+		text-decoration: underline;
+		text-underline-offset: 0.25em;
+	}
+</style>

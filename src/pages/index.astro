@@ -1,0 +1,130 @@
+---
+import { getCollection } from 'astro:content';
+import Aurora from '../components/Aurora.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_HEADLINE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<section class="hero">
+		<Aurora />
+		<p class="ghost" aria-hidden="true">{SITE_TITLE}</p>
+		<div class="shell hero-inner above-aurora">
+			<span class="eyebrow">Invented journeys</span>
+			<h1>{SITE_DESCRIPTION}</h1>
+			<p class="lede">{SITE_HEADLINE}</p>
+		</div>
+	</section>
+
+	<section class="section shell">
+		<h2 class="sr-only">Posts</h2>
+		{
+			posts.length === 0 ? (
+				<p class="empty">
+					No accounts have been filed yet. Add a Markdown file to
+					<code>src/content/posts/</code> to begin.
+				</p>
+			) : (
+				<div class="listing">
+					<PostCard post={featured} featured />
+					{rest.length > 0 && (
+						<div class="grid">
+							{rest.map((post) => (
+								<PostCard post={post} />
+							))}
+						</div>
+					)}
+				</div>
+			)
+		}
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		position: relative;
+		display: flex;
+		align-items: center;
+		min-height: 68vh;
+		padding-block: clamp(4rem, 12vw, 8rem);
+		overflow: hidden;
+		border-bottom: 1px solid var(--hairline-soft);
+	}
+
+	/*
+	 * Oversized background wordmark. Decorative only — aria-hidden, and it carries
+	 * no information, so the slow drift below is safe to drop entirely.
+	 */
+	.ghost {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		z-index: 0;
+		width: max-content;
+		transform: translateY(-50%);
+		color: var(--ghost);
+		font-family: var(--font-heading), Georgia, serif;
+		font-size: var(--size-ghost);
+		letter-spacing: var(--tracking-ghost);
+		line-height: 1;
+		white-space: nowrap;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	@keyframes ghost-drift {
+		from {
+			transform: translate(0, -50%);
+		}
+		to {
+			transform: translate(-4rem, -50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.ghost {
+			animation: ghost-drift var(--drift-ghost) linear infinite alternate;
+		}
+	}
+
+	.hero-inner {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.hero-inner h1 {
+		max-width: 700px;
+	}
+
+	.lede {
+		max-width: 56ch;
+		color: var(--text-dim);
+	}
+
+	.listing {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 2rem;
+	}
+
+	.empty {
+		color: var(--text-muted);
+	}
+</style>

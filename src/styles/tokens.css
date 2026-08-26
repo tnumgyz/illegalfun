@@ -1,0 +1,105 @@
+/*
+ * Design tokens — the single source of truth for the dark theme.
+ *
+ * This is the ONLY file that should contain literal colors, type sizes, or
+ * durations. Everything else reads from these variables, so retheming the site
+ * means editing this file and nothing else.
+ *
+ * Values mirror CLAUDE.md > Visual direction. Keep the two in sync.
+ */
+
+:root {
+	color-scheme: dark;
+
+	/* ==== Base ============================================================ *
+	 * A four-step near-black ramp. Never pure #000 — the ramp needs somewhere
+	 * to go below the page ground, and true black kills the bloom gradients.  */
+	--bg: #121212; /* page ground */
+	--surface: #1a1a1a; /* alternating section bands */
+	--card: #1e1e1e; /* cards, inputs, raised panels */
+	--raised: #262626; /* hover state for --card, code chips */
+
+	/* ==== Text ============================================================ *
+	 * Contrast against --bg: 17.5:1 / 13.4:1 / 5.9:1. All three also clear AA
+	 * over the aurora's brightest overlap — see the contrast note in aurora.css. */
+	--text: #f7f7f7; /* headings, primary copy */
+	--text-dim: #dadada; /* body copy, secondary */
+	--text-muted: #929292; /* metadata — 5.9:1 on --bg, 4.6:1 over the aurora; do not darken */
+
+	/* ==== Accent ========================================================== *
+	 * Three hues, deliberately few. Teal is the workhorse; azure supports it
+	 * in gradients and blooms; crimson is rare and never competes with teal.  */
+	--accent: #1abc9c; /* teal   — primary, 7.8:1 on --bg */
+	--accent-2: #1a8fbc; /* azure  — gradients, second bloom */
+	--accent-3: #bc1a3d; /* crimson — rare; a far ember, destructive states */
+	--accent-ink: #0d1f1b; /* text on a solid --accent fill, 7.1:1 */
+
+	/* Channel triplets, so alpha variants don't need a second hex. */
+	--accent-rgb: 26 188 156;
+	--accent-2-rgb: 26 143 188;
+	--accent-3-rgb: 188 26 61;
+
+	/* Derived accent surfaces. */
+	--accent-soft: rgb(var(--accent-rgb) / 0.12); /* wash behind small elements */
+	--accent-line: rgb(var(--accent-rgb) / 0.35); /* underlines, faint borders */
+	--gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+
+	/* ==== Lines, scrims, glow ============================================= */
+	--hairline: rgb(218 218 218 / 0.2);
+	--hairline-soft: rgb(255 255 255 / 0.1);
+	--scrim: rgb(0 0 0 / 0.55);
+	--ghost: rgb(247 247 247 / 0.12);
+	--glow: 0 0 40px rgb(var(--accent-rgb) / 0.2);
+	--glow-strong: 0 0 56px rgb(var(--accent-rgb) / 0.32);
+
+	/* ==== Aurora ========================================================== *
+	 * The living background. Opacities are capped so that --text and
+	 * --text-dim stay above 9:1 even over a bloom's brightest point — see the
+	 * contrast note in aurora.css before raising any of them.                */
+	--bloom-blur: clamp(48px, 8vw, 96px);
+	--bloom-teal: 0.18;
+	--bloom-azure: 0.14;
+	--bloom-ember: 0.09;
+	--grain-opacity: 0.035;
+
+	/* ==== Type ============================================================ *
+	 * --font-heading and --font-body are injected by astro.config.mjs.       */
+	--font-mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+
+	--size-ghost: clamp(56px, 10vw, 100px);
+	--size-h1: clamp(28px, 5vw, 48px);
+	--size-h2: clamp(28px, 4vw, 42px);
+	--size-h3: clamp(20px, 2.2vw, 22px);
+	--size-body: clamp(16px, 1.1vw, 18px);
+	--size-small: 14px;
+	--size-eyebrow: 13px;
+
+	--leading-tight: 1.2;
+	--leading-body: 1.7;
+	--tracking-ghost: -0.02em;
+	--tracking-eyebrow: 0.04em;
+
+	--measure: 68ch; /* reading width for long-form prose */
+	--content-width: 1100px; /* page shell */
+
+	/* ==== Space & shape =================================================== */
+	--space-section: 6rem;
+	--space-gutter: 1.5rem;
+	--radius: 0.5rem;
+	--radius-image: 4px;
+
+	/* ==== Motion ========================================================== */
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-drift: cubic-bezier(0.45, 0, 0.55, 1);
+	--dur-fast: 0.2s;
+	--dur-hover: 0.3s;
+	--dur-reveal: 0.7s;
+	--reveal-shift: 24px;
+
+	/* Aurora cycles. Deliberately coprime-ish so the three blobs never fall
+	 * back into a visible repeating pattern. */
+	--drift-1: 34s;
+	--drift-2: 47s;
+	--drift-3: 61s;
+	--drift-ghost: 18s;
+}

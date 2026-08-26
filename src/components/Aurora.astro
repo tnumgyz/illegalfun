@@ -1,0 +1,21 @@
+---
+/**
+ * Decorative background field. All styling lives in src/styles/aurora.css.
+ *
+ * Place inside a `position: relative; overflow: hidden` parent, and give any
+ * sibling content the `.above-aurora` class so it stacks over the blooms.
+ */
+interface Props {
+	/** `hero` is the full-strength field; `soft` dials it back for page headers. */
+	variant?: 'hero' | 'soft';
+}
+
+const { variant = 'hero' } = Astro.props;
+---
+
+<div class:list={['aurora', { 'aurora--soft': variant === 'soft' }]} aria-hidden="true">
+	<span class="aurora__blob aurora__blob--1"></span>
+	<span class="aurora__blob aurora__blob--2"></span>
+	<span class="aurora__blob aurora__blob--3"></span>
+	<span class="aurora__grain"></span>
+</div>

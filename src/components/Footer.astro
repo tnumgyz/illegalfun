@@ -1,0 +1,75 @@
+---
+import { SITE_TITLE } from '../consts';
+import FictionDisclaimer from './FictionDisclaimer.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<div class="shell inner">
+		<div class="brand">
+			<a class="wordmark" href="/">{SITE_TITLE}</a>
+			<FictionDisclaimer variant="inline" />
+		</div>
+		<nav class="links" aria-label="Footer links">
+			<a href="/">Posts</a>
+			<a href="/about">About</a>
+			<a href="/rss.xml">RSS</a>
+		</nav>
+	</div>
+	<p class="shell copyright">&copy; {year} {SITE_TITLE}</p>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: auto;
+		padding-block: 3rem 2rem;
+		border-top: 1px solid var(--hairline);
+		background: var(--bg);
+	}
+
+	.inner {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.brand {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.wordmark {
+		font-family: var(--font-heading), Georgia, serif;
+		font-size: 20px;
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	.wordmark:hover {
+		color: var(--accent);
+	}
+
+	.links {
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	.links a {
+		font-size: var(--size-small);
+		text-decoration: none;
+	}
+
+	.links a:hover {
+		text-decoration: underline;
+	}
+
+	.copyright {
+		margin-top: 2.5rem;
+		color: var(--text-muted);
+		font-size: var(--size-small);
+	}
+</style>

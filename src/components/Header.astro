@@ -1,0 +1,51 @@
+---
+import { SITE_TITLE } from '../consts';
+import HeaderLink from './HeaderLink.astro';
+---
+
+<header class="site-header">
+	<nav class="shell nav" aria-label="Main navigation">
+		<a class="wordmark" href="/">{SITE_TITLE}</a>
+		<div class="links">
+			<HeaderLink href="/">Posts</HeaderLink>
+			<HeaderLink href="/about">About</HeaderLink>
+			<HeaderLink href="/rss.xml">RSS</HeaderLink>
+		</div>
+	</nav>
+</header>
+
+<style>
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		border-bottom: 1px solid var(--hairline-soft);
+		background: rgb(18 18 18 / 0.8);
+		backdrop-filter: blur(8px);
+	}
+
+	.nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding-block: 1rem;
+	}
+
+	.wordmark {
+		font-family: var(--font-heading), Georgia, serif;
+		font-size: clamp(20px, 2.4vw, 24px);
+		color: var(--text);
+		letter-spacing: -0.01em;
+		text-decoration: none;
+	}
+
+	.wordmark:hover {
+		color: var(--accent);
+	}
+
+	.links {
+		display: flex;
+		gap: clamp(1rem, 3vw, 2rem);
+	}
+</style>

@@ -1,0 +1,48 @@
+---
+import { FICTION_NOTICE } from '../consts';
+
+interface Props {
+	/** `banner` sits at the top of a post body; `inline` is a quieter footer line. */
+	variant?: 'banner' | 'inline';
+}
+
+const { variant = 'banner' } = Astro.props;
+---
+
+{
+	variant === 'banner' ? (
+		<aside class="disclaimer" role="note" aria-label="Fiction disclaimer">
+			<span class="eyebrow">This is fiction</span>
+			<p>{FICTION_NOTICE}</p>
+		</aside>
+	) : (
+		<p class="disclaimer-inline">{FICTION_NOTICE}</p>
+	)
+}
+
+<style>
+	.disclaimer {
+		padding: 1.25rem 1.5rem;
+		border: 1px solid var(--hairline);
+		border-left: 3px solid var(--accent);
+		border-radius: var(--radius);
+		background: var(--card);
+	}
+
+	.disclaimer .eyebrow {
+		margin-bottom: 0.4rem;
+	}
+
+	.disclaimer p {
+		color: var(--text-dim);
+		font-size: var(--size-small);
+		line-height: 1.6;
+	}
+
+	.disclaimer-inline {
+		max-width: 60ch;
+		color: var(--text-muted);
+		font-size: var(--size-small);
+		line-height: 1.6;
+	}
+</style>

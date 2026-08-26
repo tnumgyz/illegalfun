@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Aurora from '../components/Aurora.astro';
+import FictionDisclaimer from '../components/FictionDisclaimer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import TagList from '../components/TagList.astro';
+import BaseLayout from './BaseLayout.astro';
+
+type Props = CollectionEntry<'posts'>['data'];
+
+const { title, description, date, updated, tags, heroImage, heroAlt } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={heroImage} type="article">
+	<article>
+		<header class="post-header">
+			<Aurora variant="soft" />
+			<div class="shell head-inner above-aurora">
+				<p class="date">
+					<FormattedDate date={date} />
+					{
+						updated && (
+							<span class="updated">
+								· revised <FormattedDate date={updated} />
+							</span>
+						)
+					}
+				</p>
+				<h1>{title}</h1>
+				<hr class="rule" />
+				<p class="standfirst">{description}</p>
+				<TagList tags={tags} label={`Tags for ${title}`} />
+			</div>
+		</header>
+
+		{
+			heroImage && (
+				<div class="shell hero">
+					<Image src={heroImage} alt={heroAlt} width={1100} height={620} loading="eager" />
+				</div>
+			)
+		}
+
+		<div class="shell body">
+			{/* Required on every post — see CLAUDE.md > Non-negotiables. */}
+			<FictionDisclaimer />
+			<div class="prose">
+				<slot />
+			</div>
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	.post-header {
+		position: relative;
+		padding-block: clamp(3rem, 8vw, 5rem) 2rem;
+		overflow: hidden;
+	}
+
+
+	.head-inner {
+		position: relative;
+		z-index: 1;
+		max-width: calc(var(--measure) + 2 * var(--space-gutter));
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+
+	.date {
+		color: var(--text-muted);
+		font-size: var(--size-small);
+	}
+
+	.updated {
+		font-style: italic;
+	}
+
+	.rule {
+		margin-top: 0.25rem;
+	}
+
+	.standfirst {
+		max-width: 54ch;
+		color: var(--text-dim);
+		font-size: clamp(17px, 1.6vw, 20px);
+		font-style: italic;
+	}
+
+	.hero {
+		margin-bottom: 3rem;
+	}
+
+	.hero :global(img) {
+		width: 100%;
+		border-radius: var(--radius-image);
+		box-shadow: var(--glow);
+	}
+
+	.body {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+		max-width: calc(var(--measure) + 2 * var(--space-gutter));
+		padding-bottom: var(--space-section);
+	}
+</style>

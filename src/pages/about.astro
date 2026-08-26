@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import Aurora from '../components/Aurora.astro';
+import AboutImage from '../assets/blog-placeholder-about.jpg';
+import { SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'About';
+const description =
+	"What Il'legal Fun is, what it is not, and why every account on it is invented.";
+---
+
+<BaseLayout title={`${title} · ${SITE_TITLE}`} description={description}>
+	<section class="section shell intro">
+		<Aurora variant="soft" />
+		<div class="intro-copy above-aurora">
+			<span class="eyebrow">About</span>
+			<h1>Everything here is made up.</h1>
+			<hr class="rule" />
+			<p>
+				{SITE_TITLE} is a collection of short, first-person narratives about journeys that never
+				happened. The substances have invented names. The rooms, coastlines, and stairwells are
+				invented too, and so are the people who appear in them. Read it the way you would read any
+				other speculative fiction: as an account of an interior weather system, not as a record of
+				anything that occurred.
+			</p>
+			<p>
+				The interest here is in the shape of an experience rather than its cause — how a room
+				rearranges itself, how time thickens, what dread feels like when it arrives without a
+				subject. That is a writing problem, and it is the only problem this site is trying to
+				solve.
+			</p>
+		</div>
+		<figure class="portrait reveal above-aurora">
+			<Image src={AboutImage} alt="" width={340} height={453} loading="lazy" />
+		</figure>
+	</section>
+
+	<section class="section section--surface">
+		<div class="shell notice">
+			<span class="eyebrow">What this is not</span>
+			<h2>No instructions live here.</h2>
+			<hr class="rule" />
+			<p>
+				These narratives contain no quantities, no preparation, no sourcing, and no identification
+				of real substances — deliberately, and without exception. If you came looking for practical
+				guidance, this site does not have any and will not develop any.
+			</p>
+			<p>
+				If you are worried about your own drug use or someone else's, a local health service or
+				harm-reduction organisation is the right place to go. A fiction blog is not.
+			</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.intro {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+		gap: clamp(2rem, 6vw, 4rem);
+		align-items: center;
+		overflow: hidden;
+	}
+
+
+	.intro-copy {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		max-width: var(--measure);
+	}
+
+	.portrait {
+		position: relative;
+		z-index: 1;
+		justify-self: center;
+		width: 100%;
+		max-width: 340px;
+		margin: 0;
+		transform: rotate(2deg);
+	}
+
+	.portrait :global(img) {
+		width: 100%;
+		aspect-ratio: 3 / 4;
+		object-fit: cover;
+		border-radius: var(--radius-image);
+		box-shadow: var(--glow);
+	}
+
+	.notice {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		align-items: flex-start;
+		max-width: var(--measure);
+	}
+
+	@media (max-width: 720px) {
+		.intro {
+			grid-template-columns: 1fr;
+		}
+
+		.portrait {
+			order: -1;
+		}
+	}
+</style>

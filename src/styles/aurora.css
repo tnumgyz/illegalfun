@@ -1,0 +1,199 @@
+/*
+ * Aurora — the "alive" background layer.
+ *
+ * Three blurred radial blooms drifting on long, mutually-prime cycles, plus a
+ * static grain wash. Pure CSS: no canvas, no WebGL, no JavaScript. That is a
+ * deliberate choice, not a shortcut —
+ *
+ *   - it ships zero bytes of JS and cannot strand content behind a failed script;
+ *   - browsers already throttle CSS animations on hidden tabs and offscreen
+ *     elements, which is the pause behaviour CLAUDE.md asks a canvas to implement
+ *     by hand;
+ *   - compositor-only properties (transform, opacity) keep it off the main thread.
+ *
+ * ACCESSIBILITY / CONTRAST
+ * The blooms sit behind live text, so their opacity is capped. Measured
+ * composites over --bg (#121212), worst case first:
+ *
+ *   teal + azure overlap (hero)  #143e3f   --text 11.0:1  --text-dim  8.4:1
+ *   teal + azure overlap (soft)  #142e2f   --text 14.0:1  --text-dim 10.3:1
+ *   teal bloom peak              #13312b   --text 13.1:1  --text-dim 10.0:1
+ *
+ * --text-muted is the binding constraint. At #8a8a8a it fell to 4.16:1 over the
+ * soft overlap, which is exactly where post dates sit, so the token was raised
+ * to #929292 — now 4.6:1 there and 6.0:1 on plain --bg.
+ *
+ * It still measures 3.8:1 over the FULL-STRENGTH overlap, so:
+ *
+ *   --text-muted must not be used inside a hero-variant .aurora field.
+ *
+ * The only full-strength field on the site is the homepage hero, which contains
+ * an eyebrow (--accent), an h1 (--text) and a lede (--text-dim) and no muted
+ * text. Everything that renders muted metadata — post headers, cards, footer —
+ * uses .aurora--soft or an opaque surface. Raising any --bloom-* value means
+ * recomputing all of the above.
+ *
+ * MOTION
+ * The un-animated state below is a complete, composed, static background. Motion
+ * is layered on ONLY inside `prefers-reduced-motion: no-preference`, so reduced
+ * motion falls back to that still composition rather than to a blank or hidden
+ * layer. Nothing here carries information.
+ */
+
+.aurora {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	/* Belt and braces: this layer is decorative and must never be read out. */
+	user-select: none;
+}
+
+.aurora__blob {
+	position: absolute;
+	display: block;
+	border-radius: 50%;
+	filter: blur(var(--bloom-blur));
+	/* Static resting position. Reduced motion stops here, and it looks finished. */
+	transform: translate3d(0, 0, 0);
+}
+
+/* --- Blob 1: teal, upper left. The dominant one. ------------------------- */
+.aurora__blob--1 {
+	top: -22%;
+	left: -12%;
+	width: min(680px, 78vw);
+	aspect-ratio: 1;
+	opacity: var(--bloom-teal);
+	background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+}
+
+/* --- Blob 2: azure, lower right. The counterweight. ---------------------- */
+.aurora__blob--2 {
+	right: -16%;
+	bottom: -30%;
+	width: min(580px, 70vw);
+	aspect-ratio: 1;
+	opacity: var(--bloom-azure);
+	background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+}
+
+/*
+ * --- Blob 3: crimson ember, far right edge. ------------------------------
+ * Crimson is the reserved hue (CLAUDE.md), so this is small, faint, and pushed
+ * to the margin — enough to warm the edge, never enough to fight the teal.
+ */
+.aurora__blob--3 {
+	top: 34%;
+	right: 4%;
+	width: min(300px, 42vw);
+	aspect-ratio: 1;
+	opacity: var(--bloom-ember);
+	background: radial-gradient(circle, var(--accent-3) 0%, transparent 70%);
+}
+
+/*
+ * --- Grain -------------------------------------------------------------
+ * A single inline SVG turbulence tile at very low opacity. Static by design:
+ * animated grain is the fastest way to make a page feel noisy rather than alive,
+ * and it defeats video compression on screen recordings.
+ */
+.aurora__grain {
+	position: absolute;
+	inset: 0;
+	display: block;
+	opacity: var(--grain-opacity);
+	mix-blend-mode: overlay;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- Intensity variants ------------------------------------------------- */
+
+/* Page headers and secondary sections: same composition, dialled back. */
+.aurora--soft .aurora__blob--1 {
+	opacity: calc(var(--bloom-teal) * 0.62);
+}
+
+.aurora--soft .aurora__blob--2 {
+	opacity: calc(var(--bloom-azure) * 0.62);
+}
+
+.aurora--soft .aurora__blob--3 {
+	display: none;
+}
+
+/* ==== Motion ============================================================ *
+ * Long, slow, desynchronised drifts. Amplitudes are small relative to the blob
+ * diameters — the eye should register that something is breathing without being
+ * able to point at what moved. Only transform and opacity animate.           */
+
+@keyframes drift-1 {
+	0% {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+	50% {
+		transform: translate3d(6%, 4%, 0) scale(1.08);
+	}
+	100% {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+}
+
+@keyframes drift-2 {
+	0% {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+	50% {
+		transform: translate3d(-7%, -5%, 0) scale(1.06);
+	}
+	100% {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+}
+
+@keyframes drift-3 {
+	0% {
+		transform: translate3d(0, 0, 0);
+		opacity: var(--bloom-ember);
+	}
+	50% {
+		transform: translate3d(-4%, 7%, 0);
+		opacity: calc(var(--bloom-ember) * 1.5);
+	}
+	100% {
+		transform: translate3d(0, 0, 0);
+		opacity: var(--bloom-ember);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.aurora__blob {
+		/* Hint the compositor only while the blobs actually move. */
+		will-change: transform;
+	}
+
+	.aurora__blob--1 {
+		animation: drift-1 var(--drift-1) var(--ease-drift) infinite;
+	}
+
+	.aurora__blob--2 {
+		animation: drift-2 var(--drift-2) var(--ease-drift) infinite;
+	}
+
+	.aurora__blob--3 {
+		animation: drift-3 var(--drift-3) var(--ease-drift) infinite;
+	}
+}
+
+/*
+ * Explicit static fallback. The blanket brake in global.css already collapses
+ * durations, but stating it here keeps the aurora's reduced-motion contract
+ * readable on its own: no animation, no will-change, resting composition.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.aurora__blob {
+		animation: none;
+		will-change: auto;
+	}
+}
