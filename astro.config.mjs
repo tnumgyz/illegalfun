@@ -8,7 +8,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
 	// Placeholder. The real custom domain (illegalfun.net) is configured in a later
 	// step, together with the GitHub Pages workflow and public/CNAME.
-	site: 'https://example.com',
+	site: 'https://illegalfun.net',
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{

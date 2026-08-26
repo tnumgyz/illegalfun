@@ -1,0 +1,51 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Every push to main, as requested.
+  push:
+    branches: [main]
+  # Lets you re-run a deploy from the Actions tab without an empty commit —
+  # useful after changing Pages settings or the custom domain.
+  workflow_dispatch:
+
+# Least privilege for the two things this workflow does: read the repo, and
+# publish to Pages using OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. cancel-in-progress is false on purpose: cancelling a
+# half-finished deploy can leave the live site in a broken state, so queued runs
+# wait rather than interrupt.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build with Astro
+        uses: withastro/action@v6
+        with:
+          # package.json requires >=22.12.0; pin so the runner's default moving
+          # can't silently drop below that.
+          node-version: 22
+          package-manager: npm@latest
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
