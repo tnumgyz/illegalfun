@@ -3,7 +3,7 @@ title: 'The Long Hallway'
 description: 'An account of a corridor in a rented house that kept adding doors, and the hour I spent deciding whether to count them.'
 date: 2026-03-14
 tags: ['architecture', 'time', 'fear']
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/the-long-hallway.png'
 heroAlt: ''
 ---
 

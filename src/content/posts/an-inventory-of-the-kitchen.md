@@ -3,7 +3,7 @@ title: 'An Inventory of the Kitchen'
 description: 'Six hours spent describing eleven objects on a countertop, and the discovery that a spoon has no floor.'
 date: 2026-01-09
 tags: ['objects', 'attention', 'language']
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/an-inventory-of-the-kitchen.png'
 heroAlt: ''
 ---
 

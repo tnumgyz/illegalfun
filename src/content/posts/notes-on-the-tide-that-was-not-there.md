@@ -3,7 +3,7 @@ title: 'Notes on the Tide That Was Not There'
 description: 'A night on an estuary where the water kept the sound of moving but stopped doing it, and what that did to my sense of being a witness.'
 date: 2026-02-02
 tags: ['landscape', 'sound', 'water']
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/blog-placeholder.png'
 heroAlt: ''
 ---
 
