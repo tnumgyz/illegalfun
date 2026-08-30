@@ -26,6 +26,13 @@ const posts = defineCollection({
 			heroAlt: z.string().default(''),
 			/** Hide from listings, RSS, and sitemap without deleting the file. */
 			draft: z.boolean().default(false),
+			/**
+			 * Pin to the top of the home page regardless of date, taking the featured
+			 * slot. Keeps ordering a presentation choice instead of forcing authors to
+			 * backdate or postdate a narrative to move it. If several are pinned they
+			 * lead together, newest first.
+			 */
+			featured: z.boolean().default(false),
 		}),
 });
 
