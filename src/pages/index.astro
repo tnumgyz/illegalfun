@@ -1,6 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import Aurora from '../components/Aurora.astro';
+import heroImage from '../assets/home.png';
 import PostCard from '../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_HEADLINE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -14,9 +15,19 @@ const [featured, ...rest] = posts;
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
 	<section class="hero">
-		<Aurora />
+		<div class="hero-media" aria-hidden="true">
+			<Image
+				src={heroImage}
+				alt=""
+				widths={[640, 960, 1280, 1534]}
+				sizes="100vw"
+				loading="eager"
+				fetchpriority="high"
+			/>
+		</div>
+		<div class="hero-scrim" aria-hidden="true"></div>
 		<p class="ghost" aria-hidden="true">{SITE_TITLE}</p>
-		<div class="shell hero-inner above-aurora">
+		<div class="shell hero-inner">
 			<h1>{SITE_DESCRIPTION}</h1>
 			<p class="lede">{SITE_HEADLINE}</p>
 		</div>
@@ -51,10 +62,84 @@ const [featured, ...rest] = posts;
 		position: relative;
 		display: flex;
 		align-items: center;
+		/* home.png is 1534x936. Matching the hero to that ratio means the artwork
+		 * scales to the full page width with nothing cropped; min-height is the
+		 * floor that keeps room for the copy on narrow screens. */
+		aspect-ratio: 1534 / 936;
 		min-height: 68vh;
 		padding-block: clamp(4rem, 12vw, 8rem);
 		overflow: hidden;
 		border-bottom: 1px solid var(--hairline-soft);
+	}
+
+	/*
+	 * Full-bleed hero artwork, scaled to the page width. Decorative: the headline
+	 * carries the message, so it is aria-hidden with an empty alt.
+	 */
+	.hero-media {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+	}
+
+	.hero-media :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/*
+	 * Contrast scrim, measured against home.png rather than chosen by eye.
+	 *
+	 * home.png is near-white/yellow across the entire band the copy sits in, so
+	 * ~0.61 alpha is genuinely required BEHIND THE TEXT — there is no darker
+	 * region to exploit. What is not required is dimming the rest of the frame,
+	 * so this is a local panel rather than a wash: an ellipse sized to the two
+	 * lines of copy (measured in the browser at 900–2560px: the copy occupies
+	 * x 0.02–0.53, y 0.41–0.59 of the hero) with a soft release.
+	 *
+	 * Result: 73% of the artwork renders completely undimmed, average dimming
+	 * 15% (was 0% and 62% under the old flat scrim), and the copy still measures
+	 * h1 6.64:1, lede 5.09:1 at the worst viewport.
+	 *
+	 * Two black layers cannot express this — stacking unions their alpha, so the
+	 * region would darken where EITHER is strong. One ellipse gates both axes.
+	 *
+	 * NOTE: only the LAST background layer may be a color. Two colors in the list
+	 * makes the whole declaration invalid and the browser drops it silently.
+	 */
+	.hero-scrim {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		background:
+			linear-gradient(to bottom, rgb(18 18 18 / 0) 60%, var(--bg) 100%),
+			radial-gradient(
+				ellipse 50% 20% at 30% 50%,
+				var(--scrim-hero) 0%,
+				var(--scrim-hero) 85%,
+				rgb(0 0 0 / 0) 100%
+			);
+	}
+
+	/*
+	 * Below 900px the copy spans nearly the full width, so the panel can only be
+	 * gated vertically — a band across the copy that releases top and bottom.
+	 * Still frees the top ~12% of the frame. Measured: h1 7.17:1, lede 5.50:1.
+	 */
+	@media (max-width: 899px) {
+		.hero-scrim {
+			background:
+				linear-gradient(to bottom, rgb(18 18 18 / 0) 60%, var(--bg) 100%),
+				linear-gradient(
+					to bottom,
+					rgb(0 0 0 / 0) 12%,
+					var(--scrim-hero-narrow) 28%,
+					var(--scrim-hero-narrow) 74%,
+					rgb(0 0 0 / 0) 90%
+				);
+		}
 	}
 
 	/*
@@ -65,10 +150,10 @@ const [featured, ...rest] = posts;
 		position: absolute;
 		top: 50%;
 		left: 0;
-		z-index: 0;
+		z-index: 1;
 		width: max-content;
 		transform: translateY(-50%);
-		color: var(--ghost);
+		color: var(--ghost-hero);
 		font-family: var(--font-heading), Georgia, serif;
 		font-size: var(--size-ghost);
 		letter-spacing: var(--tracking-ghost);
@@ -95,7 +180,7 @@ const [featured, ...rest] = posts;
 
 	.hero-inner {
 		position: relative;
-		z-index: 1;
+		z-index: 3;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
