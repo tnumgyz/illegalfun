@@ -56,9 +56,10 @@
 	--scrim-hero: rgb(0 0 0 / 0.64); /* panel behind the hero copy */
 	--scrim-hero-narrow: rgb(0 0 0 / 0.66); /* full-width band below 900px */
 	--ghost: rgb(247 247 247 / 0.12);
-	/* Hero wordmark. Was 0.32 to punch through the old full-frame scrim; with that
-	 * scrim gone, 0.32 white read as haze over the artwork. Back down to 0.16. */
-	--ghost-hero: rgb(247 247 247 / 0.16);
+	/* Hero wordmark. Sits in the upper band, clear of the hero copy (see .ghost in
+	 * index.astro), so this alpha is outside the text contrast budget and is set
+	 * purely for legibility of the wordmark itself over the artwork. */
+	--ghost-hero: rgb(247 247 247 / 0.3);
 	--glow: 0 0 40px rgb(var(--accent-rgb) / 0.2);
 	--glow-strong: 0 0 56px rgb(var(--accent-rgb) / 0.32);
 

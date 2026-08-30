@@ -145,11 +145,17 @@ const [featured, ...rest] = posts;
 	/*
 	 * Oversized background wordmark. Decorative only — aria-hidden, and it carries
 	 * no information, so the slow drift below is safe to drop entirely.
+	 *
+	 * Sits in the upper band, clear of the copy: measured across 512–1898px the
+	 * wordmark spans y 0.12–0.28 of the hero while the copy starts at y 0.405, a
+	 * 12% gap. That separation is why --ghost-hero can be bright — it is no longer
+	 * part of the text contrast budget. Moving it back over the copy would put it
+	 * back in, so re-measure if this ever returns to top: 50%.
 	 */
 	.ghost {
 		position: absolute;
-		top: 50%;
-		left: 0;
+		top: 20%;
+		left: 20%;
 		z-index: 1;
 		width: max-content;
 		transform: translateY(-50%);
